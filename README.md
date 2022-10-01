@@ -1,4 +1,4 @@
-### How to use NestJS + GraphQL + Mongoose
+### How to use NestJS + GraphQL + Mongoose + JWT
 
 ### Use Skill
 
