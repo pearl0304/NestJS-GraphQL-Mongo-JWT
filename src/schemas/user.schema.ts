@@ -10,7 +10,8 @@ export const UserSchema = new mongoose.Schema({
   photoURL: String,
   password: String,
   intro: String,
-  date_crated: String
+  date_crated: String,
+  date_update: String
 });
 
 @ObjectType()
@@ -32,6 +33,9 @@ export class User extends Document {
 
   @Field(() => String, { nullable: true })
   date_crated: string;
+
+  @Field(() => String, { nullable: true })
+  date_updated: string;
 
   @Field(() => String, { nullable: true })
   access_token: string;
@@ -66,4 +70,17 @@ export class LoginInputType {
 
   @Field()
   password: string;
+}
+
+@ArgsType()
+@InputType()
+export class UserUpdateType {
+  @Field({ nullable: true })
+  displayName: string;
+
+  @Field({ nullable: true })
+  photoURL: string;
+
+  @Field({ nullable: true })
+  intro: string;
 }

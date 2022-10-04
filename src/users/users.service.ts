@@ -1,9 +1,10 @@
 import { Injectable, Inject } from "@nestjs/common";
-import { LoginInputType, User, UserInputType } from "../schemas/user.schema";
+import { LoginInputType, User, UserInputType, UserUpdateType } from "../schemas/user.schema";
 import { Model } from "mongoose";
 import * as bcrypt from "bcrypt";
 import { AuthService } from "../auth/auth.service";
 import { ApolloError } from "apollo-server-express";
+import * as moment from "moment-timezone";
 
 
 @Injectable()
@@ -59,16 +60,40 @@ export class UsersService {
         throw new ApolloError("Email or password are invalid");
       } else {
         const access_token = await this.authService.generateUserCredentials(user);
-        console.log("access_token", access_token);
 
         user.uid = user._id;
         user.access_token = access_token.access_token;
-
-        console.log(user);
         return user;
       }
       return null;
 
+    } catch (e) {
+      throw new ApolloError(e);
+    }
+  }
+
+  async updateUser(user: User, uid: string, input: UserUpdateType) {
+    try {
+      if (user.uid !== uid) throw new ApolloError("You don't have to access.");
+      const check_user = await this.userModel.findById({ _id: uid }).exec();
+      if (!check_user) throw new ApolloError("There are no user information.");
+
+      const data = {
+        ...input,
+        date_updated: moment().local().format()
+      };
+
+      await this.userModel.findOneAndUpdate(
+        { _id: uid }, { ...data }, { new: true }
+      );
+
+      const result = {
+        uid: uid,
+        email: check_user.email,
+        displayName: input.displayName ? input.displayName : check_user.displayName,
+        ...data
+      };
+      return result;
     } catch (e) {
       throw new ApolloError(e);
     }

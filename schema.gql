@@ -9,6 +9,7 @@ type User {
   photoURL: String
   intro: String
   date_crated: String
+  date_updated: String
   access_token: String
 }
 
@@ -19,6 +20,7 @@ type Query {
 type Mutation {
   createUser(input: UserInputType!): User!
   login(input: LoginInputType!): User!
+  updateUser(uid: ID!, input: UserUpdateType!): User!
 }
 
 input UserInputType {
@@ -32,4 +34,10 @@ input UserInputType {
 input LoginInputType {
   email: String!
   password: String!
+}
+
+input UserUpdateType {
+  displayName: String
+  photoURL: String
+  intro: String
 }
